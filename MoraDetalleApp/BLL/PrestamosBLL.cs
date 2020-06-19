@@ -49,15 +49,21 @@ namespace MoraDetalleApp.BLL
 
                 try
                 {
-                    contexto.Database.ExecuteSqlRaw($"Delete FROM PrestamosDetalle Where prestamoId = {prestamo.PrestamoId}");
-
-                    foreach (var item in prestamo.MoraDetalles)
+                    if (prestamo.MoraDetalles.Count > 0)
                     {
-                        contexto.Entry(item).State = EntityState.Added;
-                    }
+                        contexto.Database.ExecuteSqlRaw($"Delete FROM PrestamosDetalle Where prestamoId = {prestamo.PrestamoId}");
 
-                    contexto.Entry(prestamo).State = EntityState.Modified;
-                    paso = contexto.SaveChanges() > 0;
+                        foreach (var item in prestamo.MoraDetalles)
+                        {
+                            contexto.Entry(item).State = EntityState.Added;
+                        }
+                    }
+                    else
+                    {
+
+                        contexto.Entry(prestamo).State = EntityState.Modified;
+                        paso = contexto.SaveChanges() > 0;
+                    }
                 }
                 catch (Exception)
                 {
