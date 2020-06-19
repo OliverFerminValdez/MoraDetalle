@@ -1,0 +1,187 @@
+﻿@page "/Prestamos"
+
+@using Models
+@using BLL
+
+<EditForm Model="Prestamos" OnValidSubmit="Guardar">
+    <DataAnnotationsValidator/>
+    <div class="card">
+        <div class="card-header">
+            <h3>Prestamos</h3>
+        </div>
+        <div class="card-body">
+            <form>
+                <div class="form-row align-items-center">
+                    <div class="col">
+                        <div class="form-group">
+                            <label>EstudianteId</label>
+                            <div class="input-group">
+                                <InputNumber @bind-Value="Prestamos.PrestamoId" class="form-control col-4" />
+                                <div class="input-group-append">
+                                    <button type="button" class="btn btn-primary input-group-text" @onclick="Buscar">Buscar</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+
+            @*Fecha*@
+            <div class="form-group">
+                <label>Fecha</label>
+                <InputDate @bind-Value="Prestamos.Fecha" class="form-control" />
+                <ValidationMessage For="@(() => Prestamos.Fecha)" />
+            </div>
+            @*Nombres*@
+            <div class="form-group">
+                <label>Persona</label>
+                <InputText @bind-Value="Prestamos.Persona" class="form-control" />
+                <ValidationMessage For="@(() => Prestamos.Persona)" />
+            </div>
+            @*Agregar al detalle*@
+            <div class="form-row">
+                <div class="form-group col">
+                    <label>Fecha Mora</label>
+                    <InputDate @bind-Value="fechaMora" class="form-control" />
+                </div>
+
+                <div class="form-group col">
+                    <label>Valor Mora</label>
+                    <div class="input-group">
+                        <InputNumber @bind-Value="Valor" class="form-control" />
+                        <div class="input-group-append">
+                            <button type="button" class="btn btn-primary" @onclick="AgregarAlDetalle">
+                                <i class="oi oi-plus" aria-hidden="true" /> Agregar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-header">
+                    <h3>Moras</h3>
+                </div>
+                @*Detalle*@
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th scope="col">Fecha</th>
+                            <th scope="col">Valor Mora</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        
+                        @foreach (var item in Prestamos.MoraDetalles)
+                        {
+                            <tr>
+                                <td>@fechaMora</td>
+                                <td>@item.Valor</td>
+                            </tr>
+                        }
+
+                    </tbody>
+                </table>
+            </div>
+            @*Monto*@
+            <div class="form-group">
+                <label>Monto</label>
+                <InputNumber @bind-Value="Prestamos.Monto" class="form-control" @onfocusout="CalcularBalance" />
+                <ValidationMessage For="@(() => Prestamos.Monto)" />
+            </div>
+            @*Balance*@
+            <div class="form-group">
+                <label>Balance</label>
+                <InputNumber @bind-Value="Prestamos.Balance" class="form-control" readonly />
+                <ValidationMessage For="@(() => Prestamos.Balance)" />
+            </div>
+        </div>
+        <div class="card-footer">
+            <div class="form-group text-center" display: inline-block>
+                <button type="button" class="btn btn-lg btn-primary" @onclick="Nuevo">Nuevo</button>
+                <button type="submit" class="btn btn-lg btn-success">Guardar</button>
+                <button type="button" class="btn btn-lg btn-danger" @onclick="Eliminar">Eliminar</button>
+            </div>
+        </div>
+    </div>
+
+</EditForm>
+
+@code {
+    [Parameter]
+    public int PrestamoId { get; set; }
+    private Prestamos Prestamos = new Prestamos();
+    public int MoraId;
+    public double Valor;
+    public DateTime fechaMora;
+    public double TotalMora { get; set; } = 0;
+
+    protected override void OnInitialized()
+    {
+        Nuevo();
+        Buscar();
+    }
+    public void voidDate()
+    {
+
+    }
+    public void Nuevo()
+    {
+        Prestamos = new Prestamos();
+    }
+    public void Buscar()
+    {
+        if(Prestamos.PrestamoId > 0)
+        {
+            var encontrado = PrestamosBLL.Buscar(Prestamos.PrestamoId);
+
+            if (encontrado != null)
+                this.Prestamos = encontrado;
+
+        }
+    }
+    public void AgregarAlDetalle()
+    {
+        Prestamos.MoraDetalles.Add(new MoraDetalle
+        {
+            MoraId = 1,
+            Valor = Valor,
+            PrestamoId = Prestamos.PrestamoId,
+        }
+            );
+    }
+    public void Guardar()
+    {
+        bool guardo;
+
+        guardo = PrestamosBLL.Guardar(Prestamos);
+
+        if (guardo)
+        {
+            Nuevo();
+        }
+        else
+        {
+            Nuevo();
+        }
+    }
+    public void Eliminar()
+    {
+        bool elimino;
+
+        elimino = PrestamosBLL.Eliminar(Prestamos.PrestamoId);
+
+        if (elimino)
+        {
+            Nuevo();
+        }
+    }
+    public void CalcularBalance()
+    {
+        TotalMora = 0;
+        foreach (var item in Prestamos.MoraDetalles)
+        {
+            TotalMora += item.Valor;
+        }
+        Prestamos.Balance = Prestamos.Monto + TotalMora;
+    }
+}
