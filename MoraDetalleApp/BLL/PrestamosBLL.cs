@@ -11,22 +11,14 @@ namespace MoraDetalleApp.BLL
 {
     public class PrestamosBLL
     {
-            /// <summary>
-            /// Permite insertar o modificar una entidad en la base de datos
-            /// </summary>
-            /// <param name="prestamo">La entidad que se desea guardar</param> 
             public static bool Guardar(Prestamos prestamo)
             {
-                if (!Existe(prestamo.PrestamoId))//si no existe insertamos
+                if (!Existe(prestamo.PrestamoId))
                     return Insertar(prestamo);
                 else
                     return Modificar(prestamo);
             }
 
-            /// <summary>
-            /// Permite insertar una entidad en la base de datos
-            /// </summary>
-            /// <param name="prestamo">La entidad que se desea guardar</param>
             private static bool Insertar(Prestamos prestamo)
             {
                 bool paso = false;
@@ -34,7 +26,7 @@ namespace MoraDetalleApp.BLL
 
                 try
                 {
-                    //Agregar la entidad que se desea insertar al contexto
+                 
                     contexto.Prestamos.Add(prestamo);
                     paso = contexto.SaveChanges() > 0;
                 }
@@ -50,10 +42,6 @@ namespace MoraDetalleApp.BLL
                 return paso;
             }
 
-            /// <summary>
-            /// Permite modificar una entidad en la base de datos
-            /// </summary>
-            /// <param name="prestamo">La entidad que se desea modificar</param> 
             public static bool Modificar(Prestamos prestamo)
             {
                 bool paso = false;
@@ -68,7 +56,6 @@ namespace MoraDetalleApp.BLL
                         contexto.Entry(item).State = EntityState.Added;
                     }
 
-                    //marcar la entidad como modificada para que el contexto sepa como proceder
                     contexto.Entry(prestamo).State = EntityState.Modified;
                     paso = contexto.SaveChanges() > 0;
                 }
@@ -82,23 +69,17 @@ namespace MoraDetalleApp.BLL
                 }
                 return paso;
             }
-
-            /// <summary>
-            /// Permite eliminar una entidad de la base de datos
-            /// </summary>
-            /// <param name="id">El Id de la entidad que se desea eliminar</param> 
             public static bool Eliminar(int id)
             {
                 bool paso = false;
                 Contexto contexto = new Contexto();
                 try
                 {
-                    //buscar la entidad que se desea eliminar
                     var prestamo = contexto.Prestamos.Find(id);
 
                     if (prestamo != null)
                     {
-                        contexto.Prestamos.Remove(prestamo);//remover la entidad
+                        contexto.Prestamos.Remove(prestamo);
                         paso = contexto.SaveChanges() > 0;
                     }
                 }
@@ -113,11 +94,6 @@ namespace MoraDetalleApp.BLL
 
                 return paso;
             }
-
-            /// <summary>
-            /// Permite buscar una entidad en la base de datos
-            /// </summary>
-            /// <param name="id">El Id de la entidad que se desea buscar</param> 
             public static Prestamos Buscar(int id)
             {
                 Contexto contexto = new Contexto();
@@ -142,18 +118,12 @@ namespace MoraDetalleApp.BLL
                 return prestamo;
             }
 
-            /// <summary>
-            /// Permite obtener una lista filtrada por un criterio de busqueda
-            /// </summary>
-            /// <param name="criterio">La expresión que define el criterio de busqueda</param>
-            /// <returns></returns>
             public static List<Prestamos> GetList(Expression<Func<Prestamos, bool>> criterio)
             {
                 List<Prestamos> lista = new List<Prestamos>();
                 Contexto contexto = new Contexto();
                 try
                 {
-                    //obtener la lista y filtrarla según el criterio recibido por parametro.
                     lista = contexto.Prestamos.Where(criterio).ToList();
                 }
                 catch (Exception)
