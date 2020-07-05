@@ -42,7 +42,13 @@
             <div class="form-row">
                 <div class="form-group col">
                     <label>Fecha Mora</label>
-                    <InputDate @bind-Value="fechaMora" class="form-control" />
+                    <select @bind="_MoraId" class="form-control" @onfocusout="pullData">
+                        @foreach (var item in MoraBLL.GetMoras())
+	                    {
+                            <option value=@item.MoraId>@item.MoraId</option>
+	                    }
+                        
+                    </select>
                 </div>
 
                 <div class="form-group col">
@@ -74,8 +80,9 @@
                         @foreach (var item in Prestamos.MoraDetalles)
                         {
                             <tr>
-                                <td>@fechaMora</td>
+                                <td>@MoraBLL.Buscar(item.MoraId).Fecha</td>
                                 <td>@item.Valor</td>
+                                <td><button type="button" class="btn btn-danger" @onclick="@(()=>EliminarItem(item))"><span class="oi oi-circle-x"></span></button></td>
                             </tr>
                         }
 
@@ -114,6 +121,7 @@
     public double Valor;
     public DateTime fechaMora;
     public double TotalMora { get; set; } = 0;
+    public int _MoraId { get; set; }
 
     protected override void OnInitialized()
     {
@@ -126,6 +134,8 @@
     }
     public void Nuevo()
     {
+        Valor = 0;
+        MoraId = 0;
         Prestamos = new Prestamos();
     }
     public void Buscar()
@@ -143,11 +153,19 @@
     {
         Prestamos.MoraDetalles.Add(new MoraDetalle
         {
-            MoraId = 1,
+            MoraId = _MoraId,
             Valor = Valor,
             PrestamoId = Prestamos.PrestamoId,
         }
-            );
+            ) ;
+        CalcularBalance();
+    }
+    public void pullData()
+    {
+        if (_MoraId != 0)
+        {
+            Valor = MoraBLL.Buscar(_MoraId).Valor;
+        }
     }
     public void Guardar()
     {
@@ -183,5 +201,10 @@
             TotalMora += item.Valor;
         }
         Prestamos.Balance = Prestamos.Monto + TotalMora;
+    }
+    public void EliminarItem(MoraDetalle md)
+    {
+        Prestamos.MoraDetalles.Remove(md);
+        CalcularBalance();
     }
 }

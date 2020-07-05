@@ -17,10 +17,4 @@
     <Folder Include="Pages\Consultas\" />
   </ItemGroup>
 
-  <ItemGroup>
-    <None Update="Data\MoraDetalle.db">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-
 </Project>

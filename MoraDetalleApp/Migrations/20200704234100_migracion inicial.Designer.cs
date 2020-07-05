@@ -9,8 +9,8 @@ using MoraDetalleApp.DAL;
 namespace MoraDetalleApp.Migrations
 {
     [DbContext(typeof(Contexto))]
-    [Migration("20200619141207_MigracionInicial")]
-    partial class MigracionInicial
+    [Migration("20200704234100_migracion inicial")]
+    partial class migracioninicial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -55,6 +55,26 @@ namespace MoraDetalleApp.Migrations
                     b.HasKey("MoraId");
 
                     b.ToTable("Moras");
+
+                    b.HasData(
+                        new
+                        {
+                            MoraId = 1,
+                            Fecha = new DateTime(2020, 7, 4, 19, 40, 59, 924, DateTimeKind.Local).AddTicks(3659),
+                            Valor = 5000.0
+                        },
+                        new
+                        {
+                            MoraId = 2,
+                            Fecha = new DateTime(2020, 4, 27, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Valor = 5000.0
+                        },
+                        new
+                        {
+                            MoraId = 3,
+                            Fecha = new DateTime(2020, 5, 27, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Valor = 5000.0
+                        });
                 });
 
             modelBuilder.Entity("MoraDetalleApp.Models.Prestamos", b =>

@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace MoraDetalleApp.Migrations
 {
-    public partial class MigracionInicial : Migration
+    public partial class migracioninicial : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -57,6 +57,21 @@ namespace MoraDetalleApp.Migrations
                         principalColumn: "PrestamoId",
                         onDelete: ReferentialAction.Cascade);
                 });
+
+            migrationBuilder.InsertData(
+                table: "Moras",
+                columns: new[] { "MoraId", "Fecha", "Valor" },
+                values: new object[] { 1, new DateTime(2020, 7, 4, 19, 40, 59, 924, DateTimeKind.Local).AddTicks(3659), 5000.0 });
+
+            migrationBuilder.InsertData(
+                table: "Moras",
+                columns: new[] { "MoraId", "Fecha", "Valor" },
+                values: new object[] { 2, new DateTime(2020, 4, 27, 0, 0, 0, 0, DateTimeKind.Unspecified), 5000.0 });
+
+            migrationBuilder.InsertData(
+                table: "Moras",
+                columns: new[] { "MoraId", "Fecha", "Valor" },
+                values: new object[] { 3, new DateTime(2020, 5, 27, 0, 0, 0, 0, DateTimeKind.Unspecified), 5000.0 });
 
             migrationBuilder.CreateIndex(
                 name: "IX_MoraDetalle_MoraId",

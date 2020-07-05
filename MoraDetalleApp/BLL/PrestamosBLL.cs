@@ -46,34 +46,43 @@ namespace MoraDetalleApp.BLL
             {
                 bool paso = false;
                 Contexto contexto = new Contexto();
+                var anterior = Buscar(prestamo.PrestamoId);
 
-                try
+            try
+            {
+                foreach (var item in anterior.MoraDetalles)
                 {
-                    if (prestamo.MoraDetalles.Count > 0)
+                    if(!prestamo.MoraDetalles.Exists(o => o.Id == item.Id))
                     {
-                        contexto.Database.ExecuteSqlRaw($"Delete FROM PrestamosDetalle Where prestamoId = {prestamo.PrestamoId}");
+                         contexto.Entry(item).State = EntityState.Deleted;
+                    }
+                    
+                }
 
-                        foreach (var item in prestamo.MoraDetalles)
-                        {
-                            contexto.Entry(item).State = EntityState.Added;
-                        }
+                foreach (var item in prestamo.MoraDetalles)
+                {
+                    if(item.Id == 0)
+                    {
+                        contexto.Entry(item).State = EntityState.Added;
                     }
                     else
                     {
-
-                        contexto.Entry(prestamo).State = EntityState.Modified;
-                        paso = contexto.SaveChanges() > 0;
+                        contexto.Entry(item).State = EntityState.Modified;
                     }
                 }
-                catch (Exception)
-                {
-                    throw;
-                }
-                finally
-                {
-                    contexto.Dispose();
-                }
-                return paso;
+                contexto.Entry(prestamo).State = EntityState.Modified;
+                paso = contexto.SaveChanges() > 0;
+
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+            finally
+            {
+                contexto.Dispose();
+            }
+            return paso;
             }
             public static bool Eliminar(int id)
             {
